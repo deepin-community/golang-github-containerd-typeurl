@@ -1,15 +1,29 @@
-Source: template-repository
-Section: unknown
+Source: golang-github-containerd-typeurl
+Section: golang
 Priority: optional
-Maintainer: Tsic404 <liuheng@deepin.org>
-Build-Depends: debhelper (>= 11)
-Standards-Version: 4.1.3
-Homepage: https://github.com/deepin-community/template-repository
-#Vcs-Browser: https://salsa.debian.org/debian/deepin-community-template-repository
-#Vcs-Git: https://salsa.debian.org/debian/deepin-community-template-repository.git
+Maintainer: Debian Go Packaging Team <team+pkg-go@tracker.debian.org>
+Uploaders: Arnaud Rebillout <arnaud.rebillout@collabora.com>,
+Build-Depends: debhelper-compat (= 13),
+               dh-golang,
+               golang-any,
+               golang-github-gogo-protobuf-dev (>= 0.5~),
+               golang-github-pkg-errors-dev,
+Standards-Version: 4.6.0
+Homepage: https://github.com/containerd/typeurl
+Vcs-Browser: https://salsa.debian.org/go-team/packages/golang-github-containerd-typeurl
+Vcs-Git: https://salsa.debian.org/go-team/packages/golang-github-containerd-typeurl.git
+XS-Go-Import-Path: github.com/containerd/typeurl
+Rules-Requires-Root: no
+Testsuite: autopkgtest-pkg-go
 
-Package: template-repository
-Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}
-Description: <insert up to 60 chars description>
- <insert long description, indented with spaces>
+Package: golang-github-containerd-typeurl-dev
+Architecture: all
+Depends: golang-github-gogo-protobuf-dev (>= 0.5~),
+         golang-github-pkg-errors-dev,
+         ${misc:Depends},
+Description: Go package for managing marshaled types to protobuf.Any
+ A Go package for managing the registration, marshaling, and unmarshaling
+ of encoded types.
+ .
+ This package helps when types are sent over a GRPC API and marshaled as a
+ [protobuf.Any]().
