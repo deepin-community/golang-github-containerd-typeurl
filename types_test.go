@@ -17,8 +17,15 @@
 package typeurl
 
 import (
+	"bytes"
 	"reflect"
 	"testing"
+	"time"
+
+	"github.com/gogo/protobuf/proto"
+	gogotypes "github.com/gogo/protobuf/types"
+	"google.golang.org/protobuf/types/known/anypb"
+	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 type test struct {
@@ -29,6 +36,9 @@ type test struct {
 func clear() {
 	registry = make(map[reflect.Type]string)
 }
+
+var _ Any = &gogotypes.Any{}
+var _ Any = &anypb.Any{}
 
 func TestRegisterPointerGetPointer(t *testing.T) {
 	clear()
@@ -57,8 +67,8 @@ func TestMarshal(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if any.TypeUrl != expected {
-		t.Fatalf("expected %q but received %q", expected, any.TypeUrl)
+	if any.GetTypeUrl() != expected {
+		t.Fatalf("expected %q but received %q", expected, any.GetTypeUrl())
 	}
 
 	// marshal it again and make sure we get the same thing back.
@@ -67,7 +77,13 @@ func TestMarshal(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if newany != any { // you that right: we want the same *pointer*!
+	val := any.GetValue()
+	newval := newany.GetValue()
+
+	// Ensure pointer to same exact slice
+	newval[0] = val[0] ^ 0xff
+
+	if !bytes.Equal(newval, val) {
 		t.Fatalf("expected to get back same object: %v != %v", newany, any)
 	}
 
@@ -177,4 +193,32 @@ func TestRegisterDiffUrls(t *testing.T) {
 	}()
 	Register(&test{}, "test")
 	Register(&test{}, "test", "two")
+}
+
+func TestCheckNil(t *testing.T) {
+	var a *anyType
+
+	actual := a.GetValue()
+	if actual != nil {
+		t.Fatalf("expected nil, got %v", actual)
+	}
+}
+
+func TestProtoFallback(t *testing.T) {
+	expected := time.Now()
+	b, err := proto.Marshal(timestamppb.New(expected))
+	if err != nil {
+		t.Fatal(err)
+	}
+	x, err := UnmarshalByTypeURL("type.googleapis.com/google.protobuf.Timestamp", b)
+	if err != nil {
+		t.Fatal(err)
+	}
+	ts, ok := x.(*timestamppb.Timestamp)
+	if !ok {
+		t.Fatalf("failed to convert %+v to Timestamp", x)
+	}
+	if expected.Sub(ts.AsTime()) != 0 {
+		t.Fatalf("expected %+v but got %+v", expected, ts.AsTime())
+	}
 }
