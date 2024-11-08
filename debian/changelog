@@ -1,3 +1,27 @@
+golang-github-containerd-typeurl (2.1.1-3) unstable; urgency=medium
+
+  * Team upload.
+  * Upload to unstable
+
+ -- Reinhard Tartler <siretart@tauware.de>  Fri, 26 Jul 2024 07:12:18 +0200
+
+golang-github-containerd-typeurl (2.1.1-2) experimental; urgency=medium
+
+  * Team upload
+  * Drop unnecessary dependency version constraints
+  * Bump standards version
+  * Add usr/share/gocode/src/github.com/containerd/typeurl/v2 compat link
+
+ -- Reinhard Tartler <siretart@tauware.de>  Wed, 10 Jul 2024 21:13:32 -0400
+
+golang-github-containerd-typeurl (2.1.1-1) experimental; urgency=medium
+
+  * Team upload.
+  * New upstream version 2.1.1
+  * Bump Standards version, no changes needed
+
+ -- Reinhard Tartler <siretart@tauware.de>  Mon, 20 May 2024 07:02:38 -0400
+
 golang-github-containerd-typeurl (1.0.2-1) unstable; urgency=medium
 
   * Team upload.
